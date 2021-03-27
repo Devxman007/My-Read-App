@@ -4,15 +4,8 @@ class Books extends Component {
   render() {
     return (
       <ol className="books-grid">
-        {console.log(this.props.BooksList)}
-        {this.props.BooksList.map((book) => book)
-          .filter((b) => b.shefl === "currentlyReading")
-          .map((a) => {
-            console.log(a.shefl);
-            return a.shefl;
-          })}
         {this.props.BooksList.filter(
-          (book) => book.shefl === "currentlyReading"
+          (book) => book.shelf === this.props.shelf
         ).map((book) => {
           return (
             <li>

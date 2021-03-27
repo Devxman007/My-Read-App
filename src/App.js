@@ -62,7 +62,7 @@ class BooksApp extends React.Component {
               title={"CurrentlyReading"}
               Books={
                 <Books
-                  shefl={"currentlyReading"}
+                  shelf={"currentlyReading"}
                   BooksList={this.state.Books}
                 />
               }
@@ -70,12 +70,12 @@ class BooksApp extends React.Component {
             <Shefl
               title={"Want to read"}
               Books={
-                <Books shefl={"wantToRead"} BooksList={this.state.Books} />
+                <Books shelf={"wantToRead"} BooksList={this.state.Books} />
               }
             />
             <Shefl
               title={"Read"}
-              Books={<Books shefl={"read"} BooksList={this.state.Books} />}
+              Books={<Books shelf={"read"} BooksList={this.state.Books} />}
             />
 
             <div className="open-search">
