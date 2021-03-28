@@ -7,8 +7,9 @@ class Books extends Component {
         {this.props.BooksList.filter(
           (book) => book.shelf === this.props.shelf
         ).map((book) => {
+          console.table(book);
           return (
-            <li>
+            <li key={book.id}>
               <div className="book">
                 <div className="book-top">
                   <div
@@ -34,7 +35,9 @@ class Books extends Component {
                   </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors}</div>
+                {book.authors.map((author) => (
+                  <div className="book-authors">{author}</div>
+                ))}
               </div>
             </li>
           );
