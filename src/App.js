@@ -1,7 +1,7 @@
 import React from "react";
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
-import Shefl from "./Shefl";
+import Shelf from "./Shelf";
 import Books from "./Books";
 
 class BooksApp extends React.Component {
@@ -24,7 +24,14 @@ class BooksApp extends React.Component {
       }));
     });
   }
-
+  updateshelf(book, shelf) {
+    BooksAPI.update(book, shelf);
+    BooksAPI.getAll().then((Books) => {
+      this.setState(() => ({
+        Books: Books,
+      }));
+    });
+  }
   render() {
     return (
       <div className="app">
@@ -58,24 +65,35 @@ class BooksApp extends React.Component {
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
-            <Shefl
+            <Shelf
               title={"CurrentlyReading"}
               Books={
                 <Books
                   shelf={"currentlyReading"}
                   BooksList={this.state.Books}
+                  updateshelf={this.updateshelf}
                 />
               }
             />
-            <Shefl
+            <Shelf
               title={"Want to read"}
               Books={
-                <Books shelf={"wantToRead"} BooksList={this.state.Books} />
+                <Books
+                  shelf={"wantToRead"}
+                  BooksList={this.state.Books}
+                  updateshelf={this.updateshelf}
+                />
               }
             />
-            <Shefl
+            <Shelf
               title={"Read"}
-              Books={<Books shelf={"read"} BooksList={this.state.Books} />}
+              Books={
+                <Books
+                  shelf={"read"}
+                  BooksList={this.state.Books}
+                  updateshelf={this.updateshelf}
+                />
+              }
             />
 
             <div className="open-search">

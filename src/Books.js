@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 
 class Books extends Component {
+  state = {
+    currentShelf: "",
+  };
   render() {
     return (
       <ol className="books-grid">
@@ -21,7 +24,13 @@ class Books extends Component {
                     }}
                   />
                   <div className="book-shelf-changer">
-                    <select>
+                    <select
+                      onChange={(e) => {
+                        this.props.updateshelf(book, e.target.value);
+                        console.log(this.state.currentShelf);
+                      }}
+                      value={this.state.currentShelf}
+                    >
                       <option value="move" disabled>
                         Move to...
                       </option>
@@ -36,7 +45,9 @@ class Books extends Component {
                 </div>
                 <div className="book-title">{book.title}</div>
                 {book.authors.map((author) => (
-                  <div className="book-authors">{author}</div>
+                  <div className="book-authors" key={book.id}>
+                    {author}
+                  </div>
                 ))}
               </div>
             </li>
