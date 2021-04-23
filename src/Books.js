@@ -27,6 +27,7 @@ class Books extends Component {
                         onChange={(e) => {
                           this.props.updateshelf(book, e.target.value);
                           console.log("target", e.target.value);
+                          this.setState({ value: e.target.value });
                         }}
                         value={this.props.shelf}
                       >

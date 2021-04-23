@@ -9,6 +9,7 @@ class BooksApp extends React.Component {
   constructor(props) {
     super(props);
     this.updateshelf = this.updateshelf.bind(this);
+    this.getAllBooks = this.getAllBooks.bind(this);
 
     this.state = {
       /**
@@ -21,28 +22,32 @@ class BooksApp extends React.Component {
       showSearchPage: false,
     };
   }
-  componentDidMount() {
+  getAllBooks() {
     BooksAPI.getAll().then((Books) => {
       this.setState(() => ({
         Books,
       }));
     });
   }
+  componentDidMount() {
+    this.getAllBooks();
+  }
+
   updateshelf(book, shelf) {
     BooksAPI.update(book, shelf).then((Books) => {
-      console.log("BOOKS API", Books);
-      console.log("BOOKS STATE", this.state.Books);
+      console.log(Books, "Update retruned value");
+      console.log(this.state.Books, "State bOOKS");
       const updatedBooks = this.state.Books.map((book) => {
         if (Books.currentlyReading.find((id) => id === book.id)) {
           return { ...book, shelf: "currentlyReading" };
-        } else if (Books.read.find((id) => id === book.id)) {
-          return { ...book, shelf: "read" };
         } else if (Books.wantToRead.find((id) => id === book.id)) {
           return { ...book, shelf: "wantToRead" };
+        } else if (Books.read.find((id) => id === book.id)) {
+          return { ...book, shelf: "read" };
+        } else {
+          return "none";
         }
       });
-
-      console.log("BOOKS updated", updatedBooks);
       this.setState(() => ({
         Books: updatedBooks,
       }));
@@ -54,7 +59,11 @@ class BooksApp extends React.Component {
       <div className="app">
         {this.state.showSearchPage ? (
           <Search
-            showSearchPage={() => this.setState({ showSearchPage: false })}
+            showSearchPage={() => {
+              this.setState({ showSearchPage: false });
+              this.getAllBooks();
+            }}
+            updateshelf={this.updateshelf}
           />
         ) : (
           <div className="list-books">
