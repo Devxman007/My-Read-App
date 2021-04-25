@@ -62,6 +62,8 @@ class Search extends Component {
   render() {
     const { showSearchPage, updateshelf, booksList } = this.props;
     const { query, result } = this.state;
+    const regexQuerieValidation = /[ `!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?~]/;
+    const isQuerieValide = !regexQuerieValidation.test(query);
 
     return (
       <div className="search-books">
@@ -92,7 +94,9 @@ class Search extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {result.length > 0 && query.length > 0 ? (
+            {result.length > 0 &&
+              query.length > 0 &&
+              isQuerieValide &&
               result.map((book) => {
                 const findBook = booksList.find((b) => b.id === book.id);
 
@@ -142,18 +146,24 @@ class Search extends Component {
                     </div>
                   </li>
                 );
-              })
-            ) : (
+              })}
+            {query === "" && (
               <li> type something in the search bar to see the result</li>
             )}
+            {isQuerieValide && result.length === 0 && query.length > 0 && (
+              <li> No matched result</li>
+            )}
+            {!isQuerieValide && query !== "" && <li> Invalid query</li>}
           </ol>
         </div>
       </div>
     );
   }
 }
+
 Search.propTypes = {
   updateshelf: PropTypes.func.isRequired,
   booksList: PropTypes.array.isRequired,
 };
+
 export default Search;
