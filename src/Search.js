@@ -29,6 +29,89 @@ export const LIST_OPTIONS = [
     label: "None",
   },
 ];
+
+export const TERMS = [
+  "Android",
+  "Art",
+  "Artificial Intelligence",
+  "Astronomy",
+  "Austen",
+  "Baseball",
+  "Basketball",
+  "Bhagat",
+  "Biography",
+  "Brief",
+  "Business",
+  "Camus",
+  "Cervantes",
+  "Christie",
+  "Classics",
+  "Comics",
+  "Cook",
+  "Cricket",
+  "Cycling",
+  "Desai",
+  "Design",
+  "Development",
+  "Digital Marketing",
+  "Drama",
+  "Drawing",
+  "Dumas",
+  "Education",
+  "Everything",
+  "Fantasy",
+  "Film",
+  "Finance",
+  "First",
+  "Fitness",
+  "Football",
+  "Future",
+  "Games",
+  "Gandhi",
+  "Homer",
+  "Horror",
+  "Hugo",
+  "Ibsen",
+  "Journey",
+  "Kafka",
+  "King",
+  "Lahiri",
+  "Larsson",
+  "Learn",
+  "Literary Fiction",
+  "Make",
+  "Manage",
+  "Marquez",
+  "Money",
+  "Mystery",
+  "Negotiate",
+  "Painting",
+  "Philosophy",
+  "Photography",
+  "Poetry",
+  "Production",
+  "Programming",
+  "React",
+  "Redux",
+  "River",
+  "Robotics",
+  "Rowling",
+  "Satire",
+  "Science Fiction",
+  "Shakespeare",
+  "Singh",
+  "Swimming",
+  "Tale",
+  "Thrun",
+  "Time",
+  "Tolstoy",
+  "Travel",
+  "Ultimate",
+  "Virtual Reality",
+  "Web Development",
+  "iOS",
+].map((term) => term.toLowerCase());
+
 class Search extends Component {
   constructor(props) {
     super(props);
@@ -43,17 +126,13 @@ class Search extends Component {
     this.setState({ query: query });
     if (query.length > 0) {
       BooksAPI.search(query).then((data) => {
+        if (!Array.isArray(data)) {
+          this.setState({ result: [] });
+          return;
+        }
+
         if (data.length > 0) {
-          const returnedValue = data.filter(
-            (book) =>
-              book.title.toLowerCase().includes(query.toLowerCase()) ||
-              book.authors.filter((author) =>
-                author.toLowerCase().includes(query.toLowerCase())
-              )
-          );
-          if (returnedValue.length > 0) {
-            this.setState({ result: returnedValue });
-          }
+          this.setState({ result: data });
         }
       });
     }
@@ -62,8 +141,7 @@ class Search extends Component {
   render() {
     const { showSearchPage, updateshelf, booksList } = this.props;
     const { query, result } = this.state;
-    const regexQuerieValidation = /[ `!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?~]/;
-    const isQuerieValide = !regexQuerieValidation.test(query);
+    const isQuerieValide = TERMS.includes(query.toLowerCase());
 
     return (
       <div className="search-books">
