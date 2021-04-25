@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { LIST_OPTIONS } from "./Search";
+import PropTypes from "prop-types";
 
 class Books extends Component {
   render() {
@@ -62,5 +63,10 @@ class Books extends Component {
     );
   }
 }
+Books.propTypes = {
+  shelf: PropTypes.string.isRequired,
+  BooksList: PropTypes.array.isRequired,
+  updateshelf: PropTypes.func.isRequired,
+};
 
 export default Books;

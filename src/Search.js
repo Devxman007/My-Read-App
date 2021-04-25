@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 
@@ -55,8 +56,6 @@ class Search extends Component {
           }
         }
       });
-    } else {
-      console.log("Empty query");
     }
   }
 
@@ -96,7 +95,7 @@ class Search extends Component {
             {result.length > 0 && query.length > 0 ? (
               result.map((book) => {
                 const findBook = booksList.find((b) => b.id === book.id);
-                console.log(findBook, "heloo");
+
                 const bookShelf = findBook ? findBook.shelf : "none";
                 return (
                   <li key={"bookid" + book.id}>
@@ -153,5 +152,8 @@ class Search extends Component {
     );
   }
 }
-
+Search.propTypes = {
+  updateshelf: PropTypes.func.isRequired,
+  booksList: PropTypes.array.isRequired,
+};
 export default Search;

@@ -23,6 +23,7 @@ class BooksApp extends React.Component {
       showSearchPage: false,
     };
   }
+
   getAllBooks() {
     BooksAPI.getAll().then((Books) => {
       this.setState(() => ({
@@ -30,16 +31,13 @@ class BooksApp extends React.Component {
       }));
     });
   }
+
   componentDidMount() {
     this.getAllBooks();
   }
 
   updateshelf(book, shelf) {
-    console.log([book, shelf]);
     BooksAPI.update(book, shelf).then((Books) => {
-      console.log(Books, "Update retruned value");
-      console.log(this.state.Books, "State bOOKS");
-
       const updatedBook = { ...book, shelf };
 
       if (this.state.Books.find((b) => b.id === book.id)) {
@@ -53,20 +51,6 @@ class BooksApp extends React.Component {
           Books: [...state.Books, updatedBook],
         }));
       }
-
-      /* 
-      const updatedBooks = this.state.Books.map((book) => {
-        if (Books.currentlyReading.find((id) => id === book.id)) {
-          return { ...book, shelf: "currentlyReading" };
-        } else if (Books.wantToRead.find((id) => id === book.id)) {
-          return { ...book, shelf: "wantToRead" };
-        } else if (Books.read.find((id) => id === book.id)) {
-          return { ...book, shelf: "read" };
-        } else {
-          return "none";
-        }
-      });
-      */
     });
   }
 
