@@ -3,7 +3,8 @@ import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 import Shelf from "./Shelf";
 import Books from "./Books";
-import Search from "./Search";
+import Search, { LIST_OPTIONS } from "./Search";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
 class BooksApp extends React.Component {
   constructor(props) {
@@ -34,9 +35,26 @@ class BooksApp extends React.Component {
   }
 
   updateshelf(book, shelf) {
+    console.log([book, shelf]);
     BooksAPI.update(book, shelf).then((Books) => {
       console.log(Books, "Update retruned value");
       console.log(this.state.Books, "State bOOKS");
+
+      const updatedBook = { ...book, shelf };
+
+      if (this.state.Books.find((b) => b.id === book.id)) {
+        this.setState((state) => ({
+          Books: state.Books.map((book) =>
+            book.id === updatedBook.id ? updatedBook : book
+          ),
+        }));
+      } else {
+        this.setState((state) => ({
+          Books: [...state.Books, updatedBook],
+        }));
+      }
+
+      /* 
       const updatedBooks = this.state.Books.map((book) => {
         if (Books.currentlyReading.find((id) => id === book.id)) {
           return { ...book, shelf: "currentlyReading" };
@@ -48,67 +66,66 @@ class BooksApp extends React.Component {
           return "none";
         }
       });
-      this.setState(() => ({
-        Books: updatedBooks,
-      }));
+      */
     });
   }
 
   render() {
     return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <Search
-            showSearchPage={() => {
-              this.setState({ showSearchPage: false });
-              this.getAllBooks();
-            }}
-            updateshelf={this.updateshelf}
-          />
-        ) : (
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
-            <Shelf
-              title={"Currently Reading"}
-              Books={
-                <Books
-                  shelf={"currentlyReading"}
-                  BooksList={this.state.Books}
-                  updateshelf={this.updateshelf}
-                />
-              }
-            />
-            <Shelf
-              title={"Want to read"}
-              Books={
-                <Books
-                  shelf={"wantToRead"}
-                  BooksList={this.state.Books}
-                  updateshelf={this.updateshelf}
-                />
-              }
-            />
-            <Shelf
-              title={"Read"}
-              Books={
-                <Books
-                  shelf={"read"}
-                  BooksList={this.state.Books}
-                  updateshelf={this.updateshelf}
-                />
-              }
-            />
+      <Router>
+        <div className="app">
+          <Switch>
+            <Route exact path="/search">
+              <Search
+                showSearchPage={() => {
+                  this.setState({ showSearchPage: false });
+                }}
+                updateshelf={this.updateshelf}
+                booksList={this.state.Books}
+              />
+            </Route>
 
-            <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>
-                Add a book
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+            <Route exact path="/">
+              <div className="list-books">
+                <div className="list-books-title">
+                  <h1>MyReads</h1>
+                </div>
+                {LIST_OPTIONS.filter((option) => option.toShow).map(
+                  (o, index) => {
+                    return (
+                      <Shelf
+                        key={index}
+                        title={o.label}
+                        Books={
+                          <Books
+                            shelf={o.value}
+                            BooksList={this.state.Books}
+                            updateshelf={this.updateshelf}
+                          />
+                        }
+                      />
+                    );
+                  }
+                )}
+
+                <div className="open-search">
+                  {
+                    <Link to={"/search"}>
+                      <button
+                        onClick={() => {
+                          this.setState({ showSearchPage: true });
+                        }}
+                      >
+                        Add a book
+                      </button>
+                    </Link>
+                  }
+                </div>
+              </div>
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }

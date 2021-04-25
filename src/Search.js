@@ -1,6 +1,33 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 
+export const LIST_OPTIONS = [
+  {
+    value: "move",
+    label: "Move to...",
+    disabled: true,
+  },
+  {
+    value: "currentlyReading",
+    label: "Currently Reading",
+    toShow: true,
+  },
+  {
+    value: "wantToRead",
+    label: "Want to Read",
+    toShow: true,
+  },
+  {
+    value: "read",
+    label: "Read",
+    toShow: true,
+  },
+  {
+    value: "none",
+    label: "None",
+  },
+];
 class Search extends Component {
   constructor(props) {
     super(props);
@@ -9,28 +36,18 @@ class Search extends Component {
   state = {
     query: "",
     result: [],
-    value: "none",
   };
-  handleShelfValue = (event) => {
-    this.setState(
-      {
-        value: event.target.value,
-      },
-      () => {
-        console.log(this.state.value);
-      }
-    );
-  };
+
   updateQuery(query) {
-    this.setState({ query: query.toLowerCase() });
+    this.setState({ query: query });
     if (query.length > 0) {
       BooksAPI.search(query).then((data) => {
         if (data.length > 0) {
           const returnedValue = data.filter(
             (book) =>
-              book.title.toLowerCase().includes(query) ||
+              book.title.toLowerCase().includes(query.toLowerCase()) ||
               book.authors.filter((author) =>
-                author.toLowerCase().includes(query)
+                author.toLowerCase().includes(query.toLowerCase())
               )
           );
           if (returnedValue.length > 0) {
@@ -44,15 +61,17 @@ class Search extends Component {
   }
 
   render() {
-    const { showSearchPage, updateshelf } = this.props;
+    const { showSearchPage, updateshelf, booksList } = this.props;
     const { query, result } = this.state;
 
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <button className="close-search" onClick={showSearchPage}>
-            Close
-          </button>
+          <Link to={"/"}>
+            <button className="close-search" onClick={showSearchPage}>
+              Close
+            </button>
+          </Link>
           <div className="search-books-input-wrapper">
             {/*
               NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -74,54 +93,60 @@ class Search extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {result.length > 0 && query.length > 0
-              ? result.map((book, index) => {
-                  console.log(book, "reso dayez");
-                  return (
-                    <li key={index}>
-                      <div className="book">
-                        <div className="book-top">
-                          <div
-                            className="book-cover"
-                            style={{
-                              width: 128,
-                              height: 193,
-                              backgroundImage: `url(${
-                                book.imageLinks.thumbnail
-                              })`,
+            {result.length > 0 && query.length > 0 ? (
+              result.map((book) => {
+                const findBook = booksList.find((b) => b.id === book.id);
+                console.log(findBook, "heloo");
+                const bookShelf = findBook ? findBook.shelf : "none";
+                return (
+                  <li key={"bookid" + book.id}>
+                    <div className="book">
+                      <div className="book-top">
+                        <div
+                          className="book-cover"
+                          style={{
+                            width: 128,
+                            height: 193,
+                            backgroundImage:
+                              book.imageLinks && book.imageLinks.thumbnail
+                                ? `url(${book.imageLinks.thumbnail})`
+                                : "none",
+                          }}
+                        />
+
+                        <div className="book-shelf-changer">
+                          <select
+                            onChange={(e) => {
+                              updateshelf(book, e.target.value);
                             }}
-                          />
-                          <div className="book-shelf-changer">
-                            <select
-                              onChange={(e) => {
-                                updateshelf(book, e.target.value);
-                                this.handleShelfValue(e);
-                              }}
-                              value={this.state.value}
-                            >
-                              <option value="move" disabled>
-                                Move to...
+                            value={bookShelf}
+                          >
+                            {LIST_OPTIONS.map((option, index) => (
+                              <option
+                                key={index}
+                                value={option.value}
+                                disabled={option.disabled}
+                              >
+                                {option.label}
                               </option>
-                              <option value="currentlyReading">
-                                Currently Reading
-                              </option>
-                              <option value="wantToRead">Want to Read</option>
-                              <option value="read">Read</option>
-                              <option value="none">None</option>
-                            </select>
-                          </div>
+                            ))}
+                          </select>
                         </div>
-                        <div className="book-title">{book.title}</div>
-                        {book.authors.map((author, index) => (
-                          <div className="book-authors" key={index}>
+                      </div>
+                      <div className="book-title">{book.title}</div>
+                      {book.authors &&
+                        book.authors.map((author, index) => (
+                          <div className="book-authors" key={"author" + index}>
                             {author}
                           </div>
                         ))}
-                      </div>
-                    </li>
-                  );
-                })
-              : console.log("emptyyyyyyyyyyyyy")}
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li> type something in the search bar to see the result</li>
+            )}
           </ol>
         </div>
       </div>

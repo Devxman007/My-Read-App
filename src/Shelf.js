@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class Shefl extends Component {
+class Shelf extends Component {
   render() {
     return (
       <div className="list-books-content">
@@ -15,4 +15,4 @@ class Shefl extends Component {
   }
 }
 
-export default Shefl;
+export default Shelf;
